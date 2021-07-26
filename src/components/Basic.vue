@@ -5,8 +5,10 @@
         <widget :key="widget.id" :height="widgetHeight" :width="widgetWidth" :index="index" :id="widget.id" :src="widget.src" />
       </template>
     </div>
-    <div id="observeme" class="w-full h-1 bg-red-500 block mt-10" />
-    <div class="fixed top-3 right-3 p-4 bg-gray-600">{{ widgets.length }} Widgets</div>
+    <div class="w-full h-1 relative bg-red-50 block mt-10">
+      <div id="observeme" class="absolute -top-20 h-px w-full left-0" />
+    </div>
+    <div class="fixed top-3 right-3 p-4 bg-gray-600">{{ widgets.length }} of {{ maxWidgets }} Widgets Seen</div>
   </div>
 </template>
 
@@ -24,20 +26,24 @@ export default {
       widgetHeight: 60,
       widgetWidth: 60,
       widgetsPerRow: 0,
-      rowsPerPage: 0
+      rowsPerPage: 0,
+      maxWidgets: 5000
     }
   },
   computed: {
     widgetsPerPage() {
-      return this.widgetsPerRow * this.rowsPerPage
+      return Math.ceil(this.widgetsPerRow * this.rowsPerPage * 1.25)
     }
   },
   methods: {
     loadWidgets(num = 250) {
+      var num_to_make = num + this.widgets.length > this.maxWidgets ? this.maxWidgets - this.widgets.length : num
+      if (!num_to_make) return
+
       var _widgets = []
       var startIndex = this.widgets.length
       this.loadingIndex = startIndex
-      for (let i = 0; i < num; i++) {
+      for (let i = 0; i < num_to_make; i++) {
         var index = startIndex + (i + 1)
         _widgets.push({
           id: index,
@@ -45,12 +51,12 @@ export default {
         })
       }
       this.widgets = this.widgets.concat(_widgets)
-      console.log('Num Widgets', this.widgets.length)
     },
     setObserver() {
       const observer = new IntersectionObserver(
         ([entry]) => {
           if (entry.isIntersecting) {
+            if (this.widgets.length >= this.maxWidgets) return
             if (this.loadingIndex === this.widgets.length) {
               console.log('Already loading index', this.loadingIndex)
             } else {
@@ -60,8 +66,7 @@ export default {
           }
         },
         {
-          root: null,
-          threshold: 0.1
+          threshold: 0.0
         }
       )
       observer.observe(document.getElementById('observeme'))

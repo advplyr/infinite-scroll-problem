@@ -25,6 +25,15 @@ export default {
     return {
       name: 'basic'
     }
+  },
+  mounted() {
+    const urlParams = new URLSearchParams(window.location.search)
+    const version = urlParams.get('v')
+    if (version === 'advanced') {
+      this.name = 'advanced'
+    } else {
+      this.name = 'basic'
+    }
   }
 }
 </script>

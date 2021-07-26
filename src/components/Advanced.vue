@@ -20,8 +20,8 @@
           <p>{{ widgetsPerPage }} per page | {{ widgetsVisible.length }} Visible</p>
         </div>
         <div class="w-64 px-2">
-          <p class="text-lg">{{ widgets.length }} Widgets</p>
-          <p>{{ widgetHeight }}x{{ widgetWidth }} pixels</p>
+          <p class="text-lg">{{ widgetsSeen }} of {{ maxWidgets }} Widgets Seen</p>
+          <!-- <p>{{ widgetHeight }}x{{ widgetWidth }} pixels</p> -->
         </div>
       </div>
     </div>
@@ -37,6 +37,9 @@ export default {
   },
   data() {
     return {
+      maxWidgets: 5000,
+      widgetsSeen: 0,
+
       startRow: 0,
       startIndex: 0,
       totalRows: 0,
@@ -86,7 +89,7 @@ export default {
     },
     init() {
       if (!this.widgets.length) {
-        this.loadWidgets()
+        this.loadWidgets(this.maxWidgets)
       }
 
       this.viewportWidth = this.$refs.page.clientWidth
@@ -109,7 +112,10 @@ export default {
       }
 
       this.startIndex = sindex
-      // console.log('SET WIDGETS VISIBLE')
+
+      if (this.startIndex + this.widgetsPerPage > this.widgetsSeen) {
+        this.widgetsSeen = this.startIndex + this.widgetsPerPage
+      }
     },
     scroll() {
       var st = this.scrollwrapper.scrollTop
@@ -148,15 +154,3 @@ export default {
   }
 }
 </script>
-
-<style>
-/* div {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-  overflow-y: scroll;
-}
-
-div::-webkit-scrollbar {
-  display: none;
-} */
-</style>

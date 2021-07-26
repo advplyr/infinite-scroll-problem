@@ -27,7 +27,7 @@ export default {
       widgetWidth: 60,
       widgetsPerRow: 0,
       rowsPerPage: 0,
-      maxWidgets: 5000
+      maxWidgets: 15000
     }
   },
   computed: {
